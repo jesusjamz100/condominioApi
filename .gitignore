@@ -1,0 +1,13 @@
+__pycache__
+.env
+.vscode
+instance
+*.pyc
+*.sqlite
+.DS_Storage
+.coverage
+env.sh
+myvenv
+tests.py
+migrations
+frontend
