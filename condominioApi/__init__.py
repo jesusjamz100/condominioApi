@@ -1,12 +1,24 @@
-from flask import Flask
+from dotenv import load_dotenv
+from flask import Flask, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from os import path
+from os import path, getenv
 from .errorhandlers import registrar_errores
+from flask_cors import CORS
+
+load_dotenv()
+
+url = '/condominio/api/v1.0'
 
 # Registrar la aplicacion y setear la configuracion
 app = Flask(__name__)
+cors = CORS(app, origins=[getenv('FRONTEND_URL')])
 app.config.from_object('condominioApi.config.DevelopmentConfig')
+
+@app.before_request
+def basic_authentication():
+    if request.method.lower() == 'options':
+        return Response()
 
 # Registrar el manejo de errores
 registrar_errores(app)
@@ -21,8 +33,6 @@ migrate.init_app(app, db)
 
 # Blueprints (endpoints)
 from condominioApi.endpoints import *
-
-url = '/condominio/api/v1.0'
 
 app.register_blueprint(propietarios, url_prefix=f'{url}/propietarios')
 app.register_blueprint(ingresos, url_prefix=f'{url}/ingresos')

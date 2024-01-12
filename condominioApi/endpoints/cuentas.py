@@ -46,6 +46,8 @@ def add_cuenta():
         db.session.add(cuenta)
     except APIBadRequest:
         raise
+    except APINotFound:
+        raise
     else:
         db.session.commit()
     return jsonify(cuenta_schema.dump(cuenta))

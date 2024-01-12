@@ -23,7 +23,7 @@ def get_apartamento(apartamento_id):
     apartamento = db.session.query(Apartamento).filter_by(id=apartamento_id).first()
     if not apartamento:
         raise APINotFound('El apartamento no existe')
-    return jsonify(apartamento_schema.dump())
+    return jsonify(apartamento_schema.dump(apartamento))
 
 @apartamentos.post('/')
 def add_apartamento():

@@ -13,6 +13,8 @@ from condominioApi.schemas import ReciboSchema
 
 from condominioApi.errors import APIBadRequest, APINotFound
 
+from datetime import datetime
+
 # Regsitrar el endpoint y los schemas de serializacion
 recibos = Blueprint('recibos', __name__)
 recibo_schema = ReciboSchema()
@@ -58,18 +60,23 @@ def add_recibo():
         
         # Agregar el recibo a la base de datos
         cantidad = request.json.get('cantidad')
-        recibo = Recibo(propietario.id, ingreso.id, cantidad)
-        db.session.add(recibo)
-
+        fecha = datetime.strptime(request.json.get('fecha'), '%Y-%m-%d')
+        recibo = Recibo(propietario.id, ingreso.id, cantidad, fecha)
+        
         # Actualizar el saldo de la cuenta
-        agregarIngreso(ingreso.cuenta_id, cantidad)
+        try:
+            agregarIngreso(ingreso.cuenta_id, float(cantidad))
+        except:
+            raise APIBadRequest('Hubo un error en la petición')
+        
+        db.session.add(recibo)
 
     except APIBadRequest:
         raise
     except APINotFound:
         raise
     except:
-        raise APIBadRequest('Hubo un error con la peticion')
+        raise APIBadRequest('Hubo un error con la petición')
     else:
         db.session.commit()
     return jsonify(recibo_schema.dump(recibo))
@@ -95,11 +102,11 @@ def update_recibo(recibo_id):
             raise APIBadRequest('La cantidad y la fecha son obligatorios')
         
         # Actualizar el saldo de la cuenta
-        actualizarSaldo(cantidad, recibo=recibo)
+        actualizarSaldo(float(cantidad), recibo=recibo)
 
         # Actualizar el recibo
         recibo.cantidad = cantidad if cantidad else recibo.cantidad
-        recibo.fecha = fecha if fecha else recibo.fecha
+        recibo.fecha = datetime.strptime(fecha, '%Y-%m-%d') if fecha else recibo.fecha
         
     except APIBadRequest:
         raise

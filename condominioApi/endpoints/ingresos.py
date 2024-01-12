@@ -39,7 +39,7 @@ def add_ingreso():
             raise APIBadRequest('Hubo un error en la peticion')
         
         # Comprobar que la cuenta existe
-        cuenta = existeCuenta(request.json.get('cuenta_id'))
+        cuenta = existeCuenta(data.cuenta_id)
         if not cuenta:
             raise APINotFound('La cuenta no existe')
         
@@ -49,6 +49,10 @@ def add_ingreso():
             request.json.get('descripcion')
         )
         db.session.add(ingreso)
+    except APIBadRequest:
+        raise
+    except APINotFound:
+        raise
     except:
         raise APIBadRequest('Hubo un error en la peticion')
     else:

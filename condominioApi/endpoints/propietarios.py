@@ -3,6 +3,7 @@ from condominioApi.models import Propietario
 from condominioApi import db
 from condominioApi.schemas import PropietarioSchema
 from condominioApi.helpers import existePropietario
+from sqlalchemy import and_, or_
 
 from condominioApi.errors import APINotFound, APIBadRequest
 
@@ -13,8 +14,17 @@ propietarios_schema = PropietarioSchema(many=True)
 
 @propietarios.get('/')
 def get_propietarios():
-    # Obtener todos los propietarios de la BBDD
-    propietarios = db.session.query(Propietario).all()
+    page = request.args.get('page') or 1
+    perPage = request.args.get('per_page') or 20
+    query = request.args.get('q') or ''
+    busqueda = db.session.query(Propietario).filter(Propietario.apellido.like(f'%{query}%')).all()
+    if not request.args:
+        propietarios = Propietario.query.all()
+    else:
+        propietarios = Propietario.query.filter(or_(
+            Propietario.apellido.like(f'%{query}%'),
+            Propietario.nombre.like(f'%{query}%')
+        )).paginate(page=int(page), per_page=int(perPage))
     return jsonify(propietarios_schema.dump(propietarios))
 
 @propietarios.get('/<int:propietario_id>/')
@@ -48,6 +58,8 @@ def add_propietario():
         db.session.add(propietario)
     except APIBadRequest:
         raise
+    except:
+        raise APIBadRequest('Hubo un error con la peticion')
     else:
         db.session.commit()
     return jsonify(propietario_schema.dump(propietario))
@@ -89,6 +101,8 @@ def delete_propietario(propietario_id):
     try:
         # Eliminar el propietario de la base de datos
         db.session.delete(propietario)
+    except APINotFound:
+        raise
     except:
         raise APIBadRequest('Hubo un error en la peticion')
     else:

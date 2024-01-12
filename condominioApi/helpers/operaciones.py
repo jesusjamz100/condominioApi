@@ -2,7 +2,7 @@ from condominioApi import db
 from condominioApi.models import Cuenta, Recibo, Factura
 from condominioApi.errors import APINotFound, APIBadRequest
 
-def agregarIngreso(cuentaId, cantidad):
+def agregarIngreso(cuentaId: int, cantidad: float) -> Cuenta:
     cuenta = db.session.query(Cuenta).filter_by(id=cuentaId).first()
     if not cuenta:
         raise APINotFound('La cuenta no existe')

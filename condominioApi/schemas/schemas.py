@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields
 
-# Se creab los schemas para la serializacion de datos desde la base de datos
+# Se crean los schemas para la serializacion de datos desde la base de datos
 # para retornar el json sin problemas
 class ApartamentoSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -57,4 +57,4 @@ class CuentaSchema(Schema):
     nombre = fields.Str()
     saldo = fields.Float()
     ingresos = fields.List(fields.Nested(IngresoSchema))
-    ingresos = fields.List(fields.Nested(EgresoSchema))
+    egresos = fields.List(fields.Nested(EgresoSchema))

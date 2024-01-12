@@ -1,6 +1,5 @@
 from . import db
 from sqlalchemy import func
-from sqlalchemy.inspection import inspect
 
 class Cuenta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,10 +39,11 @@ class Recibo(db.Model):
     cantidad = db.Column(db.Float)
     fecha = db.Column(db.DateTime(timezone=True), default=func.now())
 
-    def __init__(self, propietario_id, ingreso_id, cantidad):
+    def __init__(self, propietario_id, ingreso_id, cantidad, fecha):
         self.propietario_id = propietario_id
         self.ingreso_id = ingreso_id
         self.cantidad = cantidad
+        self.fecha = fecha
 
 class Ingreso(db.Model):
     id = db.Column(db.Integer, primary_key=True)
