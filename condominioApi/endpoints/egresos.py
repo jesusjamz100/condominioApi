@@ -38,7 +38,7 @@ def add_egresos():
             raise APIBadRequest('Hubo un error en la peticion')
         
         # Comprobar que la cuenta existe
-        cuenta = existeCuenta(request.json.get('cuenta_id'))
+        cuenta = existeCuenta(int(request.json.get('cuenta_id')))
         if not cuenta:
             raise APINotFound('La cuenta no existe')
         
@@ -69,7 +69,7 @@ def update_egreso(egreso_id):
         # Comprobar si viene unad data
         data = request.get_json(force=True, silent=True)
         if not data:
-            raise APIBadRequest('No se environ los datos')
+            raise APIBadRequest('No se enviaron los datos')
         
         # Comprobar que la descripcion no viene vacia
         descripcion = request.json.get('descripcion')
