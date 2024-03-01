@@ -12,7 +12,7 @@ def agregarIngreso(cuentaId: int, cantidad: float) -> Cuenta:
         raise APIBadRequest
     return cuenta
 
-def agregarEgreso(cuentaId, cantidad):
+def agregarEgreso(cuentaId: int, cantidad: float) -> Cuenta:
     cuenta = db.session.query(Cuenta).filter_by(id=cuentaId).first()
     if not cuenta:
         raise APINotFound('La cuenta no existe')

@@ -58,7 +58,7 @@ def add_factura():
         db.session.add(factura)
 
         # Actualizar el saldo de la cuenta
-        agregarEgreso(egreso.cuenta_id, cantidad)
+        agregarEgreso(egreso.cuenta_id, float(cantidad))
 
     except APIBadRequest:
         raise
