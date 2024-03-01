@@ -89,11 +89,11 @@ def update_factura(factura_id):
             raise APIBadRequest('La cantidad y la fecha son obligatorios')
         
         # Actualizar el saldo de la cuenta
-        actualizarSaldo(cantidad, factura=factura)
+        actualizarSaldo(float(cantidad), factura=factura)
 
         # Actualizar el recibo
         factura.cantidad = cantidad if cantidad else factura.cantidad
-        factura.fecha = fecha if fecha else factura.fecha
+        # factura.fecha = fecha if fecha else factura.fecha
         
     except APIBadRequest:
         raise
